@@ -1,0 +1,16 @@
+fastapi
+aioredis
+uvicorn
+tortoise-orm[asyncpg]
+python-dotenv
+redis
+
+diffusers
+transformers
+accelerate
+safetensors
+
+torch
+torchvision
+matplotlib
+requests
