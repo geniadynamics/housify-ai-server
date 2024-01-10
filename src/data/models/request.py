@@ -97,18 +97,38 @@ class ImgGenAiDescription(Model):
 
 
 class Request(Model):
-    """ """
-
     id = fields.UUIDField(pk=True)
-    is_public = fields.BooleanField(default=False)
+    user = fields.UUIDField()
 
-    user_id = fields.UUIDField()
-    request_type = fields.CharField(max_length=128)
+    input = fields.TextField()
+
+    img_input = fields.CharField(max_length=256, null=True)
+    img_output = fields.CharField(max_length=256, null=True)
+
+    output_description = fields.CharField(max_length=512, null=True)
+    output_classification = fields.CharField(max_length=128, null=True)
+
+    request_classification = fields.FloatField()
+    is_public = fields.BooleanField(default=False)
 
     created_at = fields.DatetimeField(auto_now_add=True)
     finished_at = fields.DatetimeField(auto_now=True)
+    finished_state = fields.CharField(default="computed", max_length=128)
 
-    usage = fields.OneToOneField("usage", related_name="Request")
 
-    image_edits = fields.ReverseRelation[ImgEdit]
-    image_generation = fields.ReverseRelation[ImgGeneration]
+# class Request(Model):
+#     """ """
+#
+#     id = fields.UUIDField(pk=True)
+#     is_public = fields.BooleanField(default=False)
+#
+#     user_id = fields.UUIDField()
+#     request_type = fields.CharField(max_length=128)
+#
+#     created_at = fields.DatetimeField(auto_now_add=True)
+#     finished_at = fields.DatetimeField(auto_now=True)
+#
+#     usage = fields.OneToOneField("usage", related_name="Request")
+#
+#     image_edits = fields.ReverseRelation[ImgEdit]
+#     image_generation = fields.ReverseRelation[ImgGeneration]
