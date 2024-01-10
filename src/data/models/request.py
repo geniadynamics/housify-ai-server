@@ -98,7 +98,7 @@ class ImgGenAiDescription(Model):
 
 class Request(Model):
     id = fields.UUIDField(pk=True)
-    user = fields.UUIDField()
+    user = fields.CharField(max_length=256, null=True)
 
     input = fields.TextField()
 

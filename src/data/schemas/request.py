@@ -7,8 +7,7 @@ from tortoise.fields.data import UUIDField
 
 
 class RequestSchema(BaseModel):
-    id: UUIDType = Field()
-    user: UUIDType = Field()
+    user: Optional[str] = Field()
 
     input: str = Field()
 
