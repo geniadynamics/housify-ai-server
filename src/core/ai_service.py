@@ -43,7 +43,9 @@ DATABASE_CONFIG = config_db()
 async def read_root() -> dict:
     return {"message": "Welcome to Housify AI-Server API"}
 
-MEDIA_PATH="/var/web/housify/media/"
+
+MEDIA_PATH_OUT = "/var/web/housify/media/gen/"
+MEDIA_PATH_IN = "/var/web/housify/media/in/"
 
 
 @app.post("/inference-request", response_model=RequestSchema)
@@ -52,14 +54,20 @@ async def inference_request(data: RequestSchema):
         try:
             image: Image.Image | None = None
             if data.img_input != None:
-                image = await edit_image(data.img_input, data.input)
+                image = await edit_image(
+                    MEDIA_PATH_IN + data.img_input + ".png", data.input
+                )
             else:
                 image = await generate_image(data.input)
             if image:
                 data.img_output = uuid4().hex
-                image.save(data.img_output)
-                data.output_description = await analyze_image(data.img_output)
-                data.output_classification = await classify_image(data.img_output)
+                image.save(MEDIA_PATH_OUT + data.img_output + ".png")
+                data.output_description = await analyze_image(
+                    MEDIA_PATH_OUT + data.img_output + ".png"
+                )
+                data.output_classification = await classify_image(
+                    MEDIA_PATH_OUT + data.img_output + ".png"
+                )
 
             return data
         except Exception as e:

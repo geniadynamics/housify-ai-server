@@ -15,12 +15,12 @@ async def analyze_image(image_path: str) -> str:
 
         raw_image = Image.open(image_path)
         inputs = processor(
-            "<image>\nUSER: Classify the image with no more than 4 words\nASSISTANT:",
+            "<image>\nUSER: Describe the following image\nASSISTANT:",
             raw_image,
             return_tensors="pt",
         ).to(0, torch.float16)
 
-        output = model.generate(**inputs, max_new_tokens=4, do_sample=False)
+        output = model.generate(**inputs, max_new_tokens=512, do_sample=False)
         analysis_result = processor.decode(output[0][2:], skip_special_tokens=True)
         return analysis_result
     finally:

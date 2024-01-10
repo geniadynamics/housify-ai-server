@@ -15,7 +15,7 @@ async def classify_image(image_path: str) -> str:
 
         raw_image = Image.open(image_path)
         inputs = processor(
-            "<image>\nUSER: Describe the following image\nASSISTANT:",
+            "<image>\nUSER: Classify the image with no more than 4 words\nASSISTANT:",
             raw_image,
             return_tensors="pt",
         ).to(0, torch.float16)

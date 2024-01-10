@@ -105,7 +105,7 @@ class Request(Model):
     img_input = fields.CharField(max_length=256, null=True)
     img_output = fields.CharField(max_length=256, null=True)
 
-    output_description = fields.CharField(max_length=512, null=True)
+    output_description = fields.TextField(null=True)
     output_classification = fields.CharField(max_length=128, null=True)
 
     request_classification = fields.FloatField()

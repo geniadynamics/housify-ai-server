@@ -15,7 +15,7 @@ class RequestSchema(BaseModel):
     img_input: Optional[str] = Field(None, max_length=256)
     img_output: Optional[str] = Field(None, max_length=256)
 
-    output_description: Optional[str] = Field(None, max_length=512)
+    output_description: Optional[str] = Field(None, max_length=2048)
     output_classification: Optional[str] = Field(None, max_length=128)
 
     request_classification: float
