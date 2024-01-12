@@ -13,6 +13,7 @@ from data.models.request import Request
 from tortoise import Tortoise
 import asyncio
 from uuid import uuid4
+import re
 
 from core.orm_config import config_db
 
@@ -47,6 +48,9 @@ async def read_root() -> dict:
 MEDIA_PATH_OUT = "/var/web/housify/media/gen/"
 MEDIA_PATH_IN = "/var/web/housify/media/in/"
 
+MEDIA_URL_OUT = "https://housify.geniadynamics.org/media/gen/"
+MEDIA_URL_IN = "https://housify.geniadynamics.org/media/in/"
+
 
 @app.post("/inference-request", response_model=RequestSchema)
 async def inference_request(data: RequestSchema):
@@ -54,24 +58,36 @@ async def inference_request(data: RequestSchema):
         try:
             image: Image.Image | None = None
             if data.img_input != None:
-                image = await edit_image(
-                    MEDIA_PATH_IN + data.img_input + ".png", data.input
-                )
+                image = await edit_image(data.img_input, data.input)
             else:
                 image = await generate_image(data.input)
             if image:
-                data.img_output = uuid4().hex
-                image.save(MEDIA_PATH_OUT + data.img_output + ".png")
-                data.output_description = await analyze_image(
-                    MEDIA_PATH_OUT + data.img_output + ".png"
-                )
-                data.output_classification = await classify_image(
-                    MEDIA_PATH_OUT + data.img_output + ".png"
-                )
+                img_uuid = uuid4().hex
+                image_file_path = MEDIA_PATH_OUT + img_uuid + ".png"
+                data.img_output = MEDIA_URL_OUT + img_uuid + ".png"
+                image.save(image_file_path)
+                data.output_description = await analyze_image(image_file_path)
+                data.output_classification = await classify_image(image_file_path)
+
+            await filter_data(data)
 
             return data
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
+
+
+async def filter_data(data: RequestSchema):
+    regex = r"ASSISTANT: (.*)"
+    if data.output_description:
+        data.output_description = "Analysis: " + re.search(
+            regex, data.output_description
+        ).group(1)
+    if data.output_classification:
+        data.output_classification = "Classification: " + re.search(
+            regex, data.output_classification
+        ).group(1)
+
+    return data
 
 
 async def on_startup():
