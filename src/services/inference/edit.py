@@ -6,6 +6,7 @@ from diffusers import (
     EulerAncestralDiscreteScheduler,
 )
 
+MEDIA_IN_PATH = "/var/web/housify/media/in/"
 
 async def edit_image(url: str, prompt: str):
     try:
@@ -22,7 +23,7 @@ async def edit_image(url: str, prompt: str):
             image = ImageOps.exif_transpose(image)
             return image.convert("RGB")
 
-        image = load_image(url)
+        image = load_image(MEDIA_IN_PATH + url)
         edited_image = pipe(
             prompt, image=image, num_inference_steps=10, image_guidance_scale=1
         ).images[0]
