@@ -59,6 +59,7 @@ async def inference_request(data: RequestSchema):
             image: Image.Image | None = None
             if data.img_input != None:
                 image = await edit_image(data.img_input, data.input)
+                data.img_input = MEDIA_URL_IN + data.img_input
             else:
                 image = await generate_image(data.input)
             if image:
